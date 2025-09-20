@@ -19,3 +19,4 @@ spec:
           image: mohamedaskhaf04/wisecow:dev
           ports:
             - containerPort: 4499
+            
