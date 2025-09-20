@@ -3,19 +3,19 @@ name: CI/CD Pipeline for Wisecow
 on:
   push:
     branches:
-      - main   # runs only when you push to main branch
+      - main
   pull_request:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted   # Changed from ubuntu-latest
 
     steps:
       # Step 1: Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Docker
+      # Step 2: Log in to Docker Hub (optional if pushing image)
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -29,13 +29,7 @@ jobs:
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
 
-      # Step 4: Setup kubectl
-      - name: Set up Kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-
-      # Step 5: Deploy to Minikube
+      # Step 4: Deploy to Minikube
       - name: Deploy Wisecow to Kubernetes
         run: |
           kubectl apply -f k8s/deployment.yaml
